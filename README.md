@@ -1,2 +1,2 @@
-# MediPredict
-MediPredict is an AI-driven health risk prediction tool that uses machine learning and NLP to assess user data—such as symptoms, medical history, and lifestyle—to identify potential health risks and provide intelligent, personalized insights for preventive healthcare.
+An AI-powered Streamlit app that predicts diabetes risk using health, lifestyle, and family history data.
+Built with scikit-learn, pandas, and Streamlit, it combines machine learning predictions with a custom lifestyle risk calculator for holistic insights.

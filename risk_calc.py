@@ -1,8 +1,15 @@
-import numpy as np
-import joblib
+import numpy as np  # pyright: ignore[reportMissingImports]
+import pandas as pd  # pyright: ignore[reportMissingImports]
+import joblib  # pyright: ignore[reportMissingImports]
+import os
 
 # Load trained model
-model = joblib.load("models/diabetes_model.pkl")
+try:
+    model = joblib.load("models/diabetes_model.pkl")
+    print("✅ Model loaded successfully")
+except Exception as e:
+    print(f"❌ Error loading model: {e}")
+    model = None
 
 def calculate_lifestyle_risk(smoking, alcohol, activity, sleep_hours, family_history):
     """
@@ -38,18 +45,22 @@ def calculate_diabetes_risk(user_data):
         "Age": int
     }
     """
-    input_array = np.array([[ 
-        user_data["Pregnancies"],
-        user_data["Glucose"],
-        user_data["BloodPressure"],
-        user_data["SkinThickness"],
-        user_data["Insulin"],
-        user_data["BMI"],
-        user_data["DiabetesPedigreeFunction"],
-        user_data["Age"]
-    ]])
+    if model is None:
+        raise Exception("Model not loaded. Please train the model first.")
+    
+    # Create a DataFrame with the same column names and order as the training data
+    input_df = pd.DataFrame([{
+        "Pregnancies": user_data["Pregnancies"],
+        "Glucose": user_data["Glucose"],
+        "BloodPressure": user_data["BloodPressure"],
+        "SkinThickness": user_data["SkinThickness"],
+        "Insulin": user_data["Insulin"],
+        "BMI": user_data["BMI"],
+        "DiabetesPedigreeFunction": user_data["DiabetesPedigreeFunction"],
+        "Age": user_data["Age"]
+    }])
 
-    prediction = model.predict(input_array)[0]
+    prediction = model.predict(input_df)[0]
     return prediction  # 0 = No diabetes, 1 = Likely diabetes
 
 # Test block

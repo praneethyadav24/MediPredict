@@ -31,20 +31,25 @@ with st.form("risk_form"):
 
 # Prediction logic
 if submit:
-    # ML model input
-    user_data = {
-        "Pregnancies": pregnancies,
-        "Glucose": glucose,
-        "BloodPressure": blood_pressure,
-        "SkinThickness": skin_thickness,
-        "Insulin": insulin,
-        "BMI": bmi,
-        "DiabetesPedigreeFunction": dpf,
-        "Age": age
-    }
+    try:
+        # ML model input
+        user_data = {
+            "Pregnancies": pregnancies,
+            "Glucose": glucose,
+            "BloodPressure": blood_pressure,
+            "SkinThickness": skin_thickness,
+            "Insulin": insulin,
+            "BMI": bmi,
+            "DiabetesPedigreeFunction": dpf,
+            "Age": age
+        }
 
-    # Run ML prediction
-    model_result = calculate_diabetes_risk(user_data)
+        # Run ML prediction
+        model_result = calculate_diabetes_risk(user_data)
+    except Exception as e:
+        st.error(f"Error making prediction: {str(e)}")
+        st.stop()
+        model_result = None
 
     # Lifestyle & family risk scoring
     lifestyle_score = calculate_lifestyle_risk(smoking, alcohol, activity, sleep_hours, family_history)
@@ -52,7 +57,9 @@ if submit:
     st.subheader("🔍 Risk Analysis Results")
 
     # Show ML model result
-    if model_result == 1:
+    if model_result is None:
+        st.warning("⚠️ ML Model Prediction: Unable to predict")
+    elif model_result == 1:
         st.error("🚨 ML Model Prediction: High Risk of Diabetes")
     else:
         st.success("✅ ML Model Prediction: Low Risk of Diabetes")
@@ -73,9 +80,9 @@ if submit:
 
     if model_result == 1 or lifestyle_score >= 6:
         st.info("📌 You are in a high-risk group. Consult a doctor and take preventive steps.")
-    elif model_result == 0 and lifestyle_score < 3:
+    elif (model_result == 0 or model_result is None) and lifestyle_score < 3:
         st.success("🎉 Great job! You appear to be at low risk. Maintain your healthy habits.")
     else:
-        st.warning("📋 You’re at moderate risk. Improving lifestyle can reduce your future risk.")
+        st.warning("📋 You're at moderate risk. Improving lifestyle can reduce your future risk.")
 
     st.caption("⚠️ Disclaimer: This tool is for educational use. Consult a healthcare professional for medical advice.")

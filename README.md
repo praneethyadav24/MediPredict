@@ -1,1 +1,1 @@
-"# MediPredict" 
+An AI-powered Streamlit app that predicts diabetes risk using health, lifestyle, and family history data. Built with scikit-learn, pandas, and Streamlit, it combines machine learning predictions with a custom lifestyle risk calculator for holistic insights.
